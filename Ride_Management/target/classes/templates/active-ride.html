@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Active Rides – Metro Cab</title>
+</head>
+<body bgcolor="#f4f4f4">
+
+<table width="100%" bgcolor="#f5c518" cellpadding="0" cellspacing="0" border="0">
+    <tr><td align="center" style="padding:18px 0;">
+        <font face="Arial" size="6" color="#1a1a1a"><b>🚖 Metro Cab</b></font><br/>
+        <font face="Arial" size="3" color="#333333">Ride Booking Management</font>
+    </td></tr>
+</table>
+
+<table width="100%" bgcolor="#1a1a1a" cellpadding="0" cellspacing="0" border="0">
+    <tr><td align="center" style="padding:10px;">
+        <font face="Arial" size="3">
+            <a th:href="@{/}"        style="color:#ffffff;text-decoration:none;">🏠 Home</a> &nbsp;|&nbsp;
+            <a th:href="@{/book}"    style="color:#ffffff;text-decoration:none;">📋 Book Ride</a> &nbsp;|&nbsp;
+            <a th:href="@{/active}"  style="color:#f5c518;text-decoration:none;"><b>🟢 Active Rides</b></a> &nbsp;|&nbsp;
+            <a th:href="@{/history}" style="color:#ffffff;text-decoration:none;">📂 Ride History</a>
+        </font>
+    </td></tr>
+</table>
+
+<table width="950" align="center" cellpadding="0" cellspacing="0" border="0" style="margin-top:24px;">
+<tr><td>
+
+    <table width="100%" bgcolor="#ffffff" border="1" bordercolor="#dddddd" cellpadding="14" cellspacing="0">
+        <tr bgcolor="#1a1a1a">
+            <td><font face="Arial" size="4" color="#f5c518"><b>🟢 Active Ride Dashboard</b></font></td>
+        </tr>
+    </table><br/>
+
+    <div th:if="${successMessage}">
+        <table width="100%" bgcolor="#d4edda" border="1" bordercolor="#c3e6cb" cellpadding="10" cellspacing="0">
+            <tr><td><font face="Arial" size="2" color="#155724" th:text="${successMessage}"></font></td></tr>
+        </table><br/>
+    </div>
+
+    <div th:if="${stats != null}">
+        <table cellpadding="0" cellspacing="8" border="0"><tr>
+            <td><table bgcolor="#ffffff" border="1" bordercolor="#ddd" cellpadding="12" cellspacing="0"><tr><td align="center">
+                <font face="Arial" size="4" color="#1a1a1a"><b th:text="${stats.total}">0</b></font><br/>
+                <font face="Arial" size="1" color="#888">Total</font>
+            </td></tr></table></td>
+            <td><table bgcolor="#ffffff" border="1" bordercolor="#ddd" cellpadding="12" cellspacing="0"><tr><td align="center">
+                <font face="Arial" size="4" color="#27ae60"><b th:text="${stats.airborne}">0</b></font><br/>
+                <font face="Arial" size="1" color="#888">Active</font>
+            </td></tr></table></td>
+            <td><table bgcolor="#ffffff" border="1" bordercolor="#ddd" cellpadding="12" cellspacing="0"><tr><td align="center">
+                <font face="Arial" size="4" color="#e67e22"><b th:text="${stats.pending}">0</b></font><br/>
+                <font face="Arial" size="1" color="#888">Pending</font>
+            </td></tr></table></td>
+            <td><table bgcolor="#ffffff" border="1" bordercolor="#ddd" cellpadding="12" cellspacing="0"><tr><td align="center">
+                <font face="Arial" size="4" color="#2980b9"><b th:text="${stats.landed}">0</b></font><br/>
+                <font face="Arial" size="1" color="#888">Completed</font>
+            </td></tr></table></td>
+        </tr></table><br/>
+    </div>
+
+    <!-- ACTIVE RIDES -->
+    <table width="100%" border="1" bordercolor="#27ae60" cellpadding="0" cellspacing="0">
+        <tr bgcolor="#27ae60"><td style="padding:10px;">
+            <font face="Arial" size="3" color="#ffffff"><b>🟢 Active Rides (Accepted)</b></font>
+        </td></tr>
+        <tr><td style="padding:14px;" bgcolor="#ffffff">
+            <div th:if="${airborneRides != null and !airborneRides.empty}">
+                <div th:each="ride : ${airborneRides}">
+                    <table width="100%" bgcolor="#f0fff4" border="1" bordercolor="#27ae60" cellpadding="10" cellspacing="0" style="margin-bottom:12px;">
+                        <tr bgcolor="#27ae60">
+                            <td colspan="2"><font face="Arial" size="2" color="#ffffff">
+                                <b th:text="${ride.rideId}"></b> &nbsp;
+                                <span th:text="${ride.rideType}"></span>
+                            </font></td>
+                        </tr>
+                        <tr>
+                            <td width="50%"><font face="Arial" size="2">
+                                <b>Passenger:</b> <span th:text="${ride.passengerName}"></span><br/>
+                                <b>Driver:</b> <span th:text="${ride.driverAssigned}"></span><br/>
+                                <b>Fare:</b> Rs.<span th:text="${#numbers.formatDecimal(ride.fare,1,2)}"></span>
+                            </font></td>
+                            <td width="50%"><font face="Arial" size="2">
+                                <b>Pickup:</b> <span th:text="${ride.pickupCoordinates}"></span><br/>
+                                <b>Dropoff:</b> <span th:text="${ride.dropoffCoordinates}"></span><br/>
+                                <b>Booked:</b> <span th:text="${ride.bookingTime}"></span>
+                            </font></td>
+                        </tr>
+                        <tr bgcolor="#e8f8ee"><td colspan="2">
+                            <form th:action="@{/ride/status}" method="post" style="display:inline;">
+                                <input type="hidden" name="rideId" th:value="${ride.rideId}"/>
+                                <input type="hidden" name="newStatus" value="LANDED"/>
+                                <input type="hidden" name="redirectTo" value="/active"/>
+                                <input type="submit" value=" Mark Completed " style="background:#e67e22;color:#fff;border:none;font-family:Arial;font-size:12px;padding:6px 14px;cursor:pointer;"/>
+                            </form>
+                            &nbsp;
+                            <form th:action="@{/ride/cancel}" method="post" style="display:inline;" onsubmit="return confirm('Cancel?')">
+                                <input type="hidden" name="rideId" th:value="${ride.rideId}"/>
+                                <input type="submit" value=" Cancel Ride " style="background:#c0392b;color:#fff;border:none;font-family:Arial;font-size:12px;padding:6px 14px;cursor:pointer;"/>
+                            </form>
+                        </td></tr>
+                    </table>
+                </div>
+            </div>
+            <div th:if="${airborneRides == null or airborneRides.empty}" align="center">
+                <font face="Arial" size="3" color="#999999">No active rides at the moment.</font><br/><br/>
+            </div>
+        </td></tr>
+    </table><br/>
+
+    <!-- PENDING RIDES -->
+    <table width="100%" border="1" bordercolor="#e67e22" cellpadding="0" cellspacing="0">
+        <tr bgcolor="#e67e22"><td style="padding:10px;">
+            <font face="Arial" size="3" color="#ffffff"><b>🟡 Pending Rides</b></font>
+        </td></tr>
+        <tr><td style="padding:14px;" bgcolor="#ffffff">
+            <div th:if="${pendingRides != null and !pendingRides.empty}">
+                <div th:each="ride : ${pendingRides}">
+                    <table width="100%" bgcolor="#fffbf0" border="1" bordercolor="#e67e22" cellpadding="10" cellspacing="0" style="margin-bottom:12px;">
+                        <tr bgcolor="#e67e22">
+                            <td colspan="2"><font face="Arial" size="2" color="#ffffff">
+                                <b th:text="${ride.rideId}"></b> &nbsp;
+                                <span th:text="${ride.rideType}"></span>
+                            </font></td>
+                        </tr>
+                        <tr>
+                            <td width="50%"><font face="Arial" size="2">
+                                <b>Passenger:</b> <span th:text="${ride.passengerName}"></span><br/>
+                                <b>Driver:</b> <span th:text="${ride.driverAssigned}"></span><br/>
+                                <b>Fare:</b> Rs.<span th:text="${#numbers.formatDecimal(ride.fare,1,2)}"></span>
+                            </font></td>
+                            <td width="50%"><font face="Arial" size="2">
+                                <b>Pickup:</b> <span th:text="${ride.pickupCoordinates}"></span><br/>
+                                <b>Dropoff:</b> <span th:text="${ride.dropoffCoordinates}"></span><br/>
+                                <b>Booked:</b> <span th:text="${ride.bookingTime}"></span>
+                            </font></td>
+                        </tr>
+                        <tr bgcolor="#fef3e2"><td colspan="2">
+                            <form th:action="@{/ride/status}" method="post" style="display:inline;">
+                                <input type="hidden" name="rideId" th:value="${ride.rideId}"/>
+                                <input type="hidden" name="newStatus" value="AIRBORNE"/>
+                                <input type="hidden" name="redirectTo" value="/active"/>
+                                <input type="submit" value=" Accept Ride " style="background:#27ae60;color:#fff;border:none;font-family:Arial;font-size:12px;padding:6px 14px;cursor:pointer;"/>
+                            </form>
+                            &nbsp;
+                            <form th:action="@{/ride/cancel}" method="post" style="display:inline;" onsubmit="return confirm('Cancel?')">
+                                <input type="hidden" name="rideId" th:value="${ride.rideId}"/>
+                                <input type="submit" value=" Cancel Ride " style="background:#c0392b;color:#fff;border:none;font-family:Arial;font-size:12px;padding:6px 14px;cursor:pointer;"/>
+                            </form>
+                        </td></tr>
+                    </table>
+                </div>
+            </div>
+            <div th:if="${pendingRides == null or pendingRides.empty}" align="center">
+                <font face="Arial" size="3" color="#999999">No pending rides.</font><br/><br/>
+            </div>
+        </td></tr>
+    </table>
+
+</td></tr>
+</table><br/>
+
+<table width="100%" bgcolor="#1a1a1a" cellpadding="12" cellspacing="0" border="0" style="margin-top:20px;">
+    <tr><td align="center">
+        <font face="Arial" size="2" color="#888888">Metro Cab – Ride Booking Management &nbsp;|&nbsp; Taxi Booking System</font>
+    </td></tr>
+</table>
+</body>
+</html>

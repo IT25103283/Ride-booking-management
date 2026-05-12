@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Ride Details – Metro Cab</title>
+</head>
+<body bgcolor="#f4f4f4">
+
+<table width="100%" bgcolor="#f5c518" cellpadding="0" cellspacing="0" border="0">
+    <tr><td align="center" style="padding:18px 0;">
+        <font face="Arial" size="6" color="#1a1a1a"><b>🚖 Metro Cab</b></font><br/>
+        <font face="Arial" size="3" color="#333333">Ride Booking Management</font>
+    </td></tr>
+</table>
+
+<table width="100%" bgcolor="#1a1a1a" cellpadding="0" cellspacing="0" border="0">
+    <tr><td align="center" style="padding:10px;">
+        <font face="Arial" size="3">
+            <a th:href="@{/}"        style="color:#ffffff;text-decoration:none;">🏠 Home</a> &nbsp;|&nbsp;
+            <a th:href="@{/book}"    style="color:#ffffff;text-decoration:none;">📋 Book Ride</a> &nbsp;|&nbsp;
+            <a th:href="@{/active}"  style="color:#ffffff;text-decoration:none;">🟢 Active Rides</a> &nbsp;|&nbsp;
+            <a th:href="@{/history}" style="color:#ffffff;text-decoration:none;">📂 Ride History</a>
+        </font>
+    </td></tr>
+</table>
+
+<table width="750" align="center" cellpadding="0" cellspacing="0" border="0" style="margin-top:24px;">
+<tr><td>
+
+    <div th:if="${error != null}">
+        <table width="100%" bgcolor="#f8d7da" border="1" bordercolor="#f5c6cb" cellpadding="14" cellspacing="0">
+            <tr><td><font face="Arial" size="3" color="#721c24" th:text="${error}"></font></td></tr>
+        </table>
+        <br/>
+        <a th:href="@{/history}"><font face="Arial" size="2">← Back to History</font></a>
+    </div>
+
+    <div th:if="${ride != null}">
+
+        <table width="100%" bgcolor="#ffffff" border="1" bordercolor="#dddddd" cellpadding="14" cellspacing="0">
+            <tr bgcolor="#1a1a1a">
+                <td colspan="2">
+                    <font face="Arial" size="4" color="#f5c518"><b>Ride Details</b></font>
+                    &nbsp;&nbsp;
+                    <font face="Arial" size="2"
+                          th:color="${ride.rideType == 'PREMIUM'} ? '#a855f7' : '#60a5fa'"
+                          th:text="'[ ' + ${ride.rideType} + ' ]'"></font>
+                    &nbsp;
+                    <font face="Arial" size="2"
+                          th:color="${ride.status == 'AIRBORNE'} ? '#22c55e' : (${ride.status == 'LANDED'} ? '#9ca3af' : '#f97316')"
+                          th:text="'[ ' + ${ride.status} + ' ]'"></font>
+                </td>
+            </tr>
+            <tr bgcolor="#f9f9f9">
+                <td width="35%"><font face="Arial" size="2"><b>Ride ID</b></font></td>
+                <td><font face="Arial" size="2" th:text="${ride.rideId}"></font></td>
+            </tr>
+            <tr>
+                <td><font face="Arial" size="2"><b>Passenger Name</b></font></td>
+                <td><font face="Arial" size="2" th:text="${ride.passengerName}"></font></td>
+            </tr>
+            <tr bgcolor="#f9f9f9">
+                <td><font face="Arial" size="2"><b>Driver Assigned</b></font></td>
+                <td><font face="Arial" size="2" th:text="${ride.driverAssigned}"></font></td>
+            </tr>
+            <tr>
+                <td><font face="Arial" size="2"><b>Pickup Coordinates</b></font></td>
+                <td><font face="Arial" size="2" th:text="${ride.pickupCoordinates}"></font></td>
+            </tr>
+            <tr bgcolor="#f9f9f9">
+                <td><font face="Arial" size="2"><b>Dropoff Coordinates</b></font></td>
+                <td><font face="Arial" size="2" th:text="${ride.dropoffCoordinates}"></font></td>
+            </tr>
+            <tr>
+                <td><font face="Arial" size="2"><b>Fare</b></font></td>
+                <td><font face="Arial" size="3" color="#1a1a1a"><b th:text="'Rs. ' + ${#numbers.formatDecimal(ride.fare,1,2)}"></b></font></td>
+            </tr>
+            <tr bgcolor="#f9f9f9">
+                <td><font face="Arial" size="2"><b>Ride Description</b></font></td>
+                <td><font face="Arial" size="2" color="#555555" th:text="${ride.getRideDetails()}"></font></td>
+            </tr>
+            <tr>
+                <td><font face="Arial" size="2"><b>Booked At</b></font></td>
+                <td><font face="Arial" size="2" color="#666666" th:text="${ride.bookingTime}"></font></td>
+            </tr>
+        </table>
+
+        <br/>
+
+        <!-- Status Actions -->
+        <div th:if="${ride.status != 'LANDED'}">
+            <table width="100%" bgcolor="#ffffff" border="1" bordercolor="#dddddd" cellpadding="14" cellspacing="0">
+                <tr bgcolor="#f5c518">
+                    <td><font face="Arial" size="3" color="#1a1a1a"><b>Update Status</b></font></td>
+                </tr>
+                <tr><td>
+                    <form th:if="${ride.status == 'PENDING'}" th:action="@{/ride/status}" method="post" style="display:inline;">
+                        <input type="hidden" name="rideId" th:value="${ride.rideId}"/>
+                        <input type="hidden" name="newStatus" value="AIRBORNE"/>
+                        <input type="hidden" name="redirectTo" th:value="'/ride/' + ${ride.rideId}"/>
+                        <input type="submit" value=" Accept Ride " style="background:#27ae60;color:#fff;border:none;font-family:Arial;font-size:13px;padding:8px 18px;cursor:pointer;"/>
+                    </form>
+                    <form th:if="${ride.status == 'AIRBORNE'}" th:action="@{/ride/status}" method="post" style="display:inline;">
+                        <input type="hidden" name="rideId" th:value="${ride.rideId}"/>
+                        <input type="hidden" name="newStatus" value="LANDED"/>
+                        <input type="hidden" name="redirectTo" th:value="'/ride/' + ${ride.rideId}"/>
+                        <input type="submit" value=" Mark Completed " style="background:#e67e22;color:#fff;border:none;font-family:Arial;font-size:13px;padding:8px 18px;cursor:pointer;"/>
+                    </form>
+                    &nbsp;&nbsp;
+                    <form th:action="@{/ride/cancel}" method="post" style="display:inline;" onsubmit="return confirm('Cancel this ride?')">
+                        <input type="hidden" name="rideId" th:value="${ride.rideId}"/>
+                        <input type="submit" value=" Cancel Ride " style="background:#c0392b;color:#fff;border:none;font-family:Arial;font-size:13px;padding:8px 18px;cursor:pointer;"/>
+                    </form>
+                </td></tr>
+            </table>
+            <br/>
+        </div>
+
+        <a th:href="@{/history}"><font face="Arial" size="2">← Back to History</font></a>
+        &nbsp;&nbsp;
+        <a th:href="@{/active}"><font face="Arial" size="2">Active Rides</font></a>
+
+    </div>
+
+</td></tr>
+</table><br/>
+
+<table width="100%" bgcolor="#1a1a1a" cellpadding="12" cellspacing="0" border="0" style="margin-top:20px;">
+    <tr><td align="center">
+        <font face="Arial" size="2" color="#888888">Metro Cab – Ride Booking Management &nbsp;|&nbsp; Taxi Booking System</font>
+    </td></tr>
+</table>
+</body>
+</html>

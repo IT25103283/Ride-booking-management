@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Book a Ride – Metro Cab</title>
+</head>
+<body bgcolor="#f4f4f4">
+
+<!-- Header -->
+<table width="100%" bgcolor="#f5c518" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+        <td align="center" style="padding:18px 0;">
+            <font face="Arial" size="6" color="#1a1a1a"><b>🚖 Metro Cab</b></font>
+            <br/>
+            <font face="Arial" size="3" color="#333333">Ride Booking Management</font>
+        </td>
+    </tr>
+</table>
+
+<!-- Navbar -->
+<table width="100%" bgcolor="#1a1a1a" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+        <td align="center" style="padding:10px;">
+            <font face="Arial" size="3">
+                &nbsp;&nbsp;
+                <a th:href="@{/}"        style="color:#f5c518; text-decoration:none;"><b>🏠 Home</b></a>
+                &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                <a th:href="@{/book}"    style="color:#f5c518; text-decoration:none;"><b>📋 Book Ride</b></a>
+                &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                <a th:href="@{/active}"  style="color:#ffffff; text-decoration:none;">🟢 Active Rides</a>
+                &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                <a th:href="@{/history}" style="color:#ffffff; text-decoration:none;">📂 Ride History</a>
+                &nbsp;&nbsp;
+            </font>
+        </td>
+    </tr>
+</table>
+
+<!-- Main -->
+<table width="750" align="center" cellpadding="0" cellspacing="0" border="0" style="margin-top:24px;">
+    <tr>
+        <td>
+
+            <!-- Page Title -->
+            <table width="100%" bgcolor="#ffffff" border="1" bordercolor="#dddddd" cellpadding="14" cellspacing="0">
+                <tr bgcolor="#1a1a1a">
+                    <td><font face="Arial" size="4" color="#f5c518"><b>📋 Book a Ride</b></font></td>
+                </tr>
+                <tr>
+                    <td><font face="Arial" size="2" color="#666666">Fill in the details below to book your Metro Cab ride.</font></td>
+                </tr>
+            </table>
+
+            <br/>
+
+            <!-- Error -->
+            <div th:if="${errorMessage}">
+                <table width="100%" bgcolor="#f8d7da" border="1" bordercolor="#f5c6cb" cellpadding="10" cellspacing="0">
+                    <tr><td><font face="Arial" size="2" color="#721c24" th:text="${errorMessage}"></font></td></tr>
+                </table>
+                <br/>
+            </div>
+
+            <!-- Booking Form -->
+            <table width="100%" bgcolor="#ffffff" border="1" bordercolor="#dddddd" cellpadding="14" cellspacing="0">
+                <tr>
+                    <td>
+                        <form th:action="@{/book}" method="post">
+
+                            <table width="100%" cellpadding="8" cellspacing="0" border="0">
+
+                                <!-- Passenger Name -->
+                                <tr>
+                                    <td width="200"><font face="Arial" size="2"><b>Passenger Name</b></font></td>
+                                    <td>
+                                        <input type="text" name="passengerName"
+                                               placeholder="Enter passenger name"
+                                               size="45" required
+                                               style="padding:6px; border:1px solid #ccc; font-family:Arial; font-size:13px;"/>
+                                    </td>
+                                </tr>
+
+                                <tr><td colspan="2"><hr color="#eeeeee"/></td></tr>
+
+                                <!-- Pickup -->
+                                <tr>
+                                    <td><font face="Arial" size="2"><b>Pickup Coordinates</b></font></td>
+                                    <td>
+                                        <input type="text" name="pickupCoordinates"
+                                               placeholder="e.g. 28.6139, 77.2090"
+                                               size="45" required
+                                               style="padding:6px; border:1px solid #ccc; font-family:Arial; font-size:13px;"/>
+                                        <br/>
+                                        <font face="Arial" size="1" color="#999999">Format: latitude, longitude</font>
+                                    </td>
+                                </tr>
+
+                                <tr><td colspan="2"><hr color="#eeeeee"/></td></tr>
+
+                                <!-- Dropoff -->
+                                <tr>
+                                    <td><font face="Arial" size="2"><b>Dropoff Coordinates</b></font></td>
+                                    <td>
+                                        <input type="text" name="dropoffCoordinates"
+                                               placeholder="e.g. 19.0760, 72.8777"
+                                               size="45" required
+                                               style="padding:6px; border:1px solid #ccc; font-family:Arial; font-size:13px;"/>
+                                        <br/>
+                                        <font face="Arial" size="1" color="#999999">Format: latitude, longitude</font>
+                                    </td>
+                                </tr>
+
+                                <tr><td colspan="2"><hr color="#eeeeee"/></td></tr>
+
+                                <!-- Ride Type -->
+                                <tr>
+                                    <td valign="top"><font face="Arial" size="2"><b>Ride Type</b></font></td>
+                                    <td>
+                                        <table cellpadding="10" cellspacing="8" border="0">
+                                            <tr>
+                                                <td bgcolor="#e8f4fd" style="border:2px solid #2980b9;">
+                                                    <label>
+                                                        <input type="radio" name="rideType" value="STANDARD" checked/>
+                                                        &nbsp;<font face="Arial" size="2" color="#2980b9"><b>🚗 Standard Ride</b></font>
+                                                    </label>
+                                                    <br/>
+                                                    <font face="Arial" size="1" color="#555555">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rs.80 base + Rs.12/km</font>
+                                                </td>
+                                                <td bgcolor="#f3e8fd" style="border:2px solid #8e44ad;">
+                                                    <label>
+                                                        <input type="radio" name="rideType" value="PREMIUM"/>
+                                                        &nbsp;<font face="Arial" size="2" color="#8e44ad"><b>⭐ Premium Ride</b></font>
+                                                    </label>
+                                                    <br/>
+                                                    <font face="Arial" size="1" color="#555555">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rs.250 base + Rs.28/km + Rs.150 surcharge</font>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+
+                                <tr><td colspan="2"><hr color="#eeeeee"/></td></tr>
+
+                                <!-- Submit -->
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input type="submit" value="  Confirm Booking  "
+                                               style="background:#f5c518; border:2px solid #1a1a1a; font-family:Arial; font-size:14px; font-weight:bold; padding:8px 20px; cursor:pointer;"/>
+                                        &nbsp;&nbsp;
+                                        <a th:href="@{/history}"><font face="Arial" size="2" color="#666666">Cancel</font></a>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+
+            <br/>
+
+            <!-- Ride Type Info -->
+            <table width="100%" border="1" bordercolor="#dddddd" cellpadding="10" cellspacing="0" bgcolor="#ffffff">
+                <tr bgcolor="#1a1a1a">
+                    <td colspan="3"><font face="Arial" size="3" color="#f5c518"><b>Metro Ride Types</b></font></td>
+                </tr>
+                <tr bgcolor="#f5c518">
+                    <td><font face="Arial" size="2"><b>Feature</b></font></td>
+                    <td><font face="Arial" size="2"><b>Standard Ride</b></font></td>
+                    <td><font face="Arial" size="2"><b>Premium Ride</b></font></td>
+                </tr>
+                <tr bgcolor="#f9f9f9">
+                    <td><font face="Arial" size="2">Java Class</font></td>
+                    <td><font face="Arial" size="2" color="#2980b9">StandardSkyRide</font></td>
+                    <td><font face="Arial" size="2" color="#8e44ad">PremiumStratosphereRide</font></td>
+                </tr>
+                <tr>
+                    <td><font face="Arial" size="2">Base Fare</font></td>
+                    <td><font face="Arial" size="2">Rs. 80</font></td>
+                    <td><font face="Arial" size="2">Rs. 250</font></td>
+                </tr>
+                <tr bgcolor="#f9f9f9">
+                    <td><font face="Arial" size="2">Per-km Rate</font></td>
+                    <td><font face="Arial" size="2">Rs. 12 / km</font></td>
+                    <td><font face="Arial" size="2">Rs. 28 / km</font></td>
+                </tr>
+                <tr>
+                    <td><font face="Arial" size="2">Surcharge</font></td>
+                    <td><font face="Arial" size="2">None</font></td>
+                    <td><font face="Arial" size="2">Rs. 150 luxury surcharge</font></td>
+                </tr>
+                <tr bgcolor="#f9f9f9">
+                    <td><font face="Arial" size="2">Driver</font></td>
+                    <td><font face="Arial" size="2">Standard Fleet Driver</font></td>
+                    <td><font face="Arial" size="2">Elite Senior Driver</font></td>
+                </tr>
+            </table>
+
+        </td>
+    </tr>
+</table>
+
+<br/>
+
+<!-- Footer -->
+<table width="100%" bgcolor="#1a1a1a" cellpadding="12" cellspacing="0" border="0" style="margin-top:20px;">
+    <tr>
+        <td align="center">
+            <font face="Arial" size="2" color="#888888">Metro Cab – Ride Booking Management &nbsp;|&nbsp; Taxi Booking System</font>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
